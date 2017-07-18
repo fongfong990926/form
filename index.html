@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>todolist</title>
+    <link rel="stylesheet" href="bootstrap3/css/bootstrap.min.css">
+
+</head>
+<body style="margin-top: 50px;">
+<div  ng-app="app">
+    <form  name="myForm" class="container form-horizontal" ng-controller="myCtrl">
+        <div class="form-group" ng-class="{'has-error':myForm.username.$dirty && myForm.username.$invalid}  ">
+            <label class="col-sm-2 control-label">用户名</label>
+            <div class="col-sm-10">
+                <input name="username"    class="form-control"  ng-pattern="/^[a-zA-Z]{1}/"
+                       placeholder="用户名" ng-model="data.username"  ng-required="true" ng-minlength="3" ng-maxlength="8">
+
+                <div class="alert alert-danger help-block" ng-if="myForm.username.$error.minlength&&myForm.username.$dirty">
+                用户名长度大于3
+            </div>
+                <div class="alert alert-danger help-block" ng-if="myForm.username.$error.maxlength&&myForm.username.$dirty">
+                    用户名长度小于8
+                </div>
+                <div class="alert alert-danger help-block" ng-if="myForm.username.$error.pattern&&myForm.username.$dirty">
+                    用户名必须以英文字母开始
+                </div>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error':myForm.password.$dirty && myForm.password.$invalid}  ">
+            <label class="col-sm-2 control-label">密码</label>
+            <div class="col-sm-10">
+                <input name="password"    class="form-control"
+                       placeholder="密码" ng-model="data.password"  ng-required="true" ng-minlength="5" ng-maxlength="10">
+                <div class="alert alert-danger help-block" ng-if="myForm.password.$error.minlength&&myForm.password.$dirty">
+                密码长度大于5
+            </div>
+                <div class="alert alert-danger help-block" ng-if="myForm.password.$error.maxlength&&myForm.password.$dirty">
+                    密码长度小于10
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error':myForm.confirmPassword.$dirty && myForm.confirmPassword.$invalid}  ">
+            <label class="col-sm-2 control-label">确认密码</label>
+            <div class="col-sm-10">
+                <input name="confirmPassword"    class="form-control"
+                       placeholder="确认密码" ng-model="data.confirmPassword"  ng-required="true" >
+                <div class="alert alert-danger help-block" ng-if="data.confirmPassword!=data.password&&myForm.password.$dirty&&myForm.confirmPassword.$dirty">
+                   密码不匹配
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error':myForm.email.$dirty && myForm.email.$invalid}  ">
+            <label class="col-sm-2 control-label">邮箱</label>
+            <div class="col-sm-10">
+                <input name="email"    class="form-control" type="email"
+                       placeholder="邮箱" ng-model="data.email"  ng-required="true" >
+                <div class="alert alert-danger help-block" ng-if="myForm.email.$error.email&&myForm.email.$dirty">
+                    邮箱格式不正确
+                </div>
+            </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error':myForm.blog.$dirty && myForm.blog.$invalid}  ">
+        <label class="col-sm-2 control-label">博客</label>
+        <div class="col-sm-10">
+            <input name="blog"    class="form-control" type="url"
+                   placeholder="博客" ng-model="data.blog"  ng-required="true" >
+            <div class="alert alert-danger help-block" ng-if="myForm.blog.$error.url&&myForm.blog.$dirty">
+                博客网址格式不正确
+            </div>
+
+        </div>
+    </div>
+        <div class="form-group" ng-class="{'has-error':myForm.age.$dirty && myForm.age.$invalid}  ">
+            <label class="col-sm-2 control-label">年龄</label>
+            <div class="col-sm-10">
+                <input name="age"    class="form-control" type="number" min="10" max="99"
+                       placeholder="年龄" ng-model="data.age"  ng-required="true"  >
+                <div class="alert alert-danger help-block" ng-if="myForm.age.$error.max&&myForm.age.$dirty">
+                    年龄不能超过99
+                </div>
+                <div class="alert alert-danger help-block" ng-if="myForm.age.$error.min&&myForm.age.$dirty">
+                    年龄不能小于10
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+        <label  class="col-sm-2 control-label">性别</label>
+        <div class="col-sm-10">
+            <label  class="radio-inline">
+                <input type="radio" name="sex" ng-model="data.sex" value="1" ng-required="true">男
+            </label>
+            <label  class="radio-inline">
+                <input type="radio" name="sex" ng-model="data.sex" value="0" ng-required="true">女
+            </label>
+        </div>
+    </div>
+        <div class="form-group">
+            <label  class="col-sm-2 control-label">爱好</label>
+            <div class="col-sm-10">
+                <label  class="checkbox-inline" ng-repeat="hobby in hobbies" ng-required="true">
+                    <input type="checkbox" name="hobby[]"  ng-checked="data.hobbies===undefined ?false:data.hobbies.indexOf(hobby.id)!=-1" ng-click="toggleSelection(hobby.id)" value="{{hobby.id}}">{{hobby.name}}
+                </label>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <label  class="col-sm-2 control-label">出生地</label>
+            <div class="col-sm-3">
+                <select  class="form-control" ng-change="data.city=false" ng-model="data.province" ng-options="x.id as x.name for x in cities | cityFilter: 0" >
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select  class="form-control" ng-if="data.province" ng-model="data.city" ng-options="x.id as x.name for x in cities | cityFilter: data.province" >
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select  class="form-control" ng-if="data.city&&data.province" ng-model="data.area"  ng-required="true" ng-options="x.id as x.name for x in cities | cityFilter: data.city" >
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+        <label  class="col-sm-2 control-label">个人介绍</label>
+        <div class="col-sm-10">
+           <custom-text-area ng-model="data.introduce"></custom-text-area>
+        </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn  btn-default" ng-disabled="myForm.$invalid||data.hobbies==undefined||data.hobbies.length===0">注册</button>
+                <button type="reset" class="btn  btn-default" ng-click="reset()">重置</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+</body>
+<script src="angular/angularjs.js"></script>
+<script src="js/myCtrl.js"></script>
+</html>
+
